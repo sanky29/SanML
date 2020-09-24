@@ -1,0 +1,3033 @@
+   0  $accept : %entry% $end
+
+   1  constants : NUM
+   2            | FLOAT
+   3            | TRUE
+   4            | FALSE
+   5            | VAR
+   6            | OP SUB NUM CP
+
+   7  exp2 : exp4
+   8       | def
+   9       | def IN exp4
+
+  10  exp4 : comparison
+  11       | OP comparison CP
+
+  12  exp3 : comparison
+  13       | OP comparison CP
+
+  14  comparison : addition
+  15             | comparison GRT addition
+  16             | comparison GRTEQL addition
+  17             | comparison LES addition
+  18             | comparison LESEQL addition
+  19             | comparison ASSIGN addition
+
+  20  addition : substraction
+  21           | addition ADD substraction
+  22           | OP addition CP
+
+  23  substraction : multiplication
+  24               | substraction SUB multiplication
+  25               | OP substraction CP
+
+  26  multiplication : division
+  27                 | multiplication MUL division
+  28                 | OP multiplication CP
+
+  29  division : faddition
+  30           | division DIV faddition
+  31           | OP division CP
+
+  32  faddition : fsubstraction
+  33            | faddition FADD fsubstraction
+  34            | OP faddition CP
+
+  35  fsubstraction : fmultiplication
+  36                | fsubstraction FSUB fmultiplication
+  37                | OP fsubstraction CP
+
+  38  fmultiplication : fdivision
+  39                  | fmultiplication FMUL fdivision
+  40                  | OP fmultiplication CP
+
+  41  fdivision : mode
+  42            | fdivision FDIV mode
+  43            | OP fdivision CP
+
+  44  mode : abse
+  45       | mode MOD abse
+  46       | OP mode CP
+
+  47  abse : funapp
+  48       | ABS funapp
+  49       | OP abse CP
+
+  50  funapp : ifelse
+  51         | OP funapp CP
+  52         | funapp ifelse
+  53         | funapp OP exp3 CP
+  54         | FUN VAR ARROW exp3
+
+  55  ifelse : tuple
+  56         | IF exp3 THEN exp3 ELSE exp3
+
+  57  tuple : constants
+  58        | OP tuple_list CP
+
+  59  tuple_list : exp3 COMMA exp3
+  60             | exp3 COMMA tuple_list
+
+  61  def : LET VAR ASSIGN exp4
+  62      | def SEMI def
+  63      | def PARD def
+  64      | LET varlist ASSIGN exp4
+  65      | LET REC varlist ASSIGN exp4
+
+  66  varlist : VAR VAR
+  67          | VAR varlist
+
+  68  %entry% : '\001' exp2
+
+state 0
+	$accept : . %entry% $end  (0)
+
+	'\001'  shift 1
+	.  error
+
+	%entry%  goto 2
+
+
+state 1
+	%entry% : '\001' . exp2  (68)
+
+	VAR  shift 3
+	NUM  shift 4
+	FLOAT  shift 5
+	TRUE  shift 6
+	FALSE  shift 7
+	ABS  shift 8
+	OP  shift 9
+	FUN  shift 10
+	LET  shift 11
+	IF  shift 12
+	.  error
+
+	exp2  goto 13
+	constants  goto 14
+	exp4  goto 15
+	def  goto 16
+	comparison  goto 17
+	addition  goto 18
+	substraction  goto 19
+	multiplication  goto 20
+	division  goto 21
+	faddition  goto 22
+	fsubstraction  goto 23
+	fmultiplication  goto 24
+	fdivision  goto 25
+	mode  goto 26
+	abse  goto 27
+	funapp  goto 28
+	ifelse  goto 29
+	tuple  goto 30
+
+
+state 2
+	$accept : %entry% . $end  (0)
+
+	$end  accept
+
+
+state 3
+	constants : VAR .  (5)
+
+	.  reduce 5
+
+
+state 4
+	constants : NUM .  (1)
+
+	.  reduce 1
+
+
+state 5
+	constants : FLOAT .  (2)
+
+	.  reduce 2
+
+
+state 6
+	constants : TRUE .  (3)
+
+	.  reduce 3
+
+
+state 7
+	constants : FALSE .  (4)
+
+	.  reduce 4
+
+
+state 8
+	abse : ABS . funapp  (48)
+
+	VAR  shift 3
+	NUM  shift 4
+	FLOAT  shift 5
+	TRUE  shift 6
+	FALSE  shift 7
+	OP  shift 31
+	FUN  shift 10
+	IF  shift 12
+	.  error
+
+	constants  goto 14
+	funapp  goto 32
+	ifelse  goto 29
+	tuple  goto 30
+
+
+state 9
+	constants : OP . SUB NUM CP  (6)
+	exp4 : OP . comparison CP  (11)
+	addition : OP . addition CP  (22)
+	substraction : OP . substraction CP  (25)
+	multiplication : OP . multiplication CP  (28)
+	division : OP . division CP  (31)
+	faddition : OP . faddition CP  (34)
+	fsubstraction : OP . fsubstraction CP  (37)
+	fmultiplication : OP . fmultiplication CP  (40)
+	fdivision : OP . fdivision CP  (43)
+	mode : OP . mode CP  (46)
+	abse : OP . abse CP  (49)
+	funapp : OP . funapp CP  (51)
+	tuple : OP . tuple_list CP  (58)
+
+	VAR  shift 3
+	NUM  shift 4
+	FLOAT  shift 5
+	TRUE  shift 6
+	FALSE  shift 7
+	SUB  shift 33
+	ABS  shift 8
+	OP  shift 34
+	FUN  shift 10
+	IF  shift 12
+	.  error
+
+	constants  goto 14
+	comparison  goto 35
+	exp3  goto 36
+	addition  goto 37
+	substraction  goto 38
+	multiplication  goto 39
+	division  goto 40
+	faddition  goto 41
+	fsubstraction  goto 42
+	fmultiplication  goto 43
+	fdivision  goto 44
+	mode  goto 45
+	abse  goto 46
+	funapp  goto 47
+	ifelse  goto 29
+	tuple  goto 30
+	tuple_list  goto 48
+
+
+state 10
+	funapp : FUN . VAR ARROW exp3  (54)
+
+	VAR  shift 49
+	.  error
+
+
+state 11
+	def : LET . VAR ASSIGN exp4  (61)
+	def : LET . varlist ASSIGN exp4  (64)
+	def : LET . REC varlist ASSIGN exp4  (65)
+
+	VAR  shift 50
+	REC  shift 51
+	.  error
+
+	varlist  goto 52
+
+
+state 12
+	ifelse : IF . exp3 THEN exp3 ELSE exp3  (56)
+
+	VAR  shift 3
+	NUM  shift 4
+	FLOAT  shift 5
+	TRUE  shift 6
+	FALSE  shift 7
+	ABS  shift 8
+	OP  shift 34
+	FUN  shift 10
+	IF  shift 12
+	.  error
+
+	constants  goto 14
+	comparison  goto 53
+	exp3  goto 54
+	addition  goto 18
+	substraction  goto 19
+	multiplication  goto 20
+	division  goto 21
+	faddition  goto 22
+	fsubstraction  goto 23
+	fmultiplication  goto 24
+	fdivision  goto 25
+	mode  goto 26
+	abse  goto 27
+	funapp  goto 28
+	ifelse  goto 29
+	tuple  goto 30
+
+
+state 13
+	%entry% : '\001' exp2 .  (68)
+
+	.  reduce 68
+
+
+state 14
+	tuple : constants .  (57)
+
+	.  reduce 57
+
+
+state 15
+	exp2 : exp4 .  (7)
+
+	.  reduce 7
+
+
+state 16
+	exp2 : def .  (8)
+	exp2 : def . IN exp4  (9)
+	def : def . SEMI def  (62)
+	def : def . PARD def  (63)
+
+	IN  shift 55
+	SEMI  shift 56
+	PARD  shift 57
+	$end  reduce 8
+
+
+state 17
+	exp4 : comparison .  (10)
+	comparison : comparison . GRT addition  (15)
+	comparison : comparison . GRTEQL addition  (16)
+	comparison : comparison . LES addition  (17)
+	comparison : comparison . LESEQL addition  (18)
+	comparison : comparison . ASSIGN addition  (19)
+
+	ASSIGN  shift 58
+	GRTEQL  shift 59
+	GRT  shift 60
+	LES  shift 61
+	LESEQL  shift 62
+	$end  reduce 10
+	IN  reduce 10
+	SEMI  reduce 10
+	PARD  reduce 10
+
+
+18: shift/reduce conflict (shift 63, reduce 14) on ADD
+state 18
+	comparison : addition .  (14)
+	addition : addition . ADD substraction  (21)
+
+	ADD  shift 63
+	$end  reduce 14
+	VAR  reduce 14
+	NUM  reduce 14
+	FLOAT  reduce 14
+	TRUE  reduce 14
+	FALSE  reduce 14
+	ASSIGN  reduce 14
+	MUL  reduce 14
+	DIV  reduce 14
+	SUB  reduce 14
+	FMUL  reduce 14
+	FDIV  reduce 14
+	FADD  reduce 14
+	FSUB  reduce 14
+	GRTEQL  reduce 14
+	GRT  reduce 14
+	LES  reduce 14
+	LESEQL  reduce 14
+	MOD  reduce 14
+	COMMA  reduce 14
+	OP  reduce 14
+	CP  reduce 14
+	IN  reduce 14
+	IF  reduce 14
+	ELSE  reduce 14
+	THEN  reduce 14
+	SEMI  reduce 14
+	PARD  reduce 14
+
+
+19: shift/reduce conflict (shift 64, reduce 20) on SUB
+state 19
+	addition : substraction .  (20)
+	substraction : substraction . SUB multiplication  (24)
+
+	SUB  shift 64
+	$end  reduce 20
+	VAR  reduce 20
+	NUM  reduce 20
+	FLOAT  reduce 20
+	TRUE  reduce 20
+	FALSE  reduce 20
+	ASSIGN  reduce 20
+	MUL  reduce 20
+	DIV  reduce 20
+	ADD  reduce 20
+	FMUL  reduce 20
+	FDIV  reduce 20
+	FADD  reduce 20
+	FSUB  reduce 20
+	GRTEQL  reduce 20
+	GRT  reduce 20
+	LES  reduce 20
+	LESEQL  reduce 20
+	MOD  reduce 20
+	COMMA  reduce 20
+	OP  reduce 20
+	CP  reduce 20
+	IN  reduce 20
+	IF  reduce 20
+	ELSE  reduce 20
+	THEN  reduce 20
+	SEMI  reduce 20
+	PARD  reduce 20
+
+
+20: shift/reduce conflict (shift 65, reduce 23) on MUL
+state 20
+	substraction : multiplication .  (23)
+	multiplication : multiplication . MUL division  (27)
+
+	MUL  shift 65
+	$end  reduce 23
+	VAR  reduce 23
+	NUM  reduce 23
+	FLOAT  reduce 23
+	TRUE  reduce 23
+	FALSE  reduce 23
+	ASSIGN  reduce 23
+	DIV  reduce 23
+	ADD  reduce 23
+	SUB  reduce 23
+	FMUL  reduce 23
+	FDIV  reduce 23
+	FADD  reduce 23
+	FSUB  reduce 23
+	GRTEQL  reduce 23
+	GRT  reduce 23
+	LES  reduce 23
+	LESEQL  reduce 23
+	MOD  reduce 23
+	COMMA  reduce 23
+	OP  reduce 23
+	CP  reduce 23
+	IN  reduce 23
+	IF  reduce 23
+	ELSE  reduce 23
+	THEN  reduce 23
+	SEMI  reduce 23
+	PARD  reduce 23
+
+
+21: shift/reduce conflict (shift 66, reduce 26) on DIV
+state 21
+	multiplication : division .  (26)
+	division : division . DIV faddition  (30)
+
+	DIV  shift 66
+	$end  reduce 26
+	VAR  reduce 26
+	NUM  reduce 26
+	FLOAT  reduce 26
+	TRUE  reduce 26
+	FALSE  reduce 26
+	ASSIGN  reduce 26
+	MUL  reduce 26
+	ADD  reduce 26
+	SUB  reduce 26
+	FMUL  reduce 26
+	FDIV  reduce 26
+	FADD  reduce 26
+	FSUB  reduce 26
+	GRTEQL  reduce 26
+	GRT  reduce 26
+	LES  reduce 26
+	LESEQL  reduce 26
+	MOD  reduce 26
+	COMMA  reduce 26
+	OP  reduce 26
+	CP  reduce 26
+	IN  reduce 26
+	IF  reduce 26
+	ELSE  reduce 26
+	THEN  reduce 26
+	SEMI  reduce 26
+	PARD  reduce 26
+
+
+22: shift/reduce conflict (shift 67, reduce 29) on FADD
+state 22
+	division : faddition .  (29)
+	faddition : faddition . FADD fsubstraction  (33)
+
+	FADD  shift 67
+	$end  reduce 29
+	VAR  reduce 29
+	NUM  reduce 29
+	FLOAT  reduce 29
+	TRUE  reduce 29
+	FALSE  reduce 29
+	ASSIGN  reduce 29
+	MUL  reduce 29
+	DIV  reduce 29
+	ADD  reduce 29
+	SUB  reduce 29
+	FMUL  reduce 29
+	FDIV  reduce 29
+	FSUB  reduce 29
+	GRTEQL  reduce 29
+	GRT  reduce 29
+	LES  reduce 29
+	LESEQL  reduce 29
+	MOD  reduce 29
+	COMMA  reduce 29
+	OP  reduce 29
+	CP  reduce 29
+	IN  reduce 29
+	IF  reduce 29
+	ELSE  reduce 29
+	THEN  reduce 29
+	SEMI  reduce 29
+	PARD  reduce 29
+
+
+23: shift/reduce conflict (shift 68, reduce 32) on FSUB
+state 23
+	faddition : fsubstraction .  (32)
+	fsubstraction : fsubstraction . FSUB fmultiplication  (36)
+
+	FSUB  shift 68
+	$end  reduce 32
+	VAR  reduce 32
+	NUM  reduce 32
+	FLOAT  reduce 32
+	TRUE  reduce 32
+	FALSE  reduce 32
+	ASSIGN  reduce 32
+	MUL  reduce 32
+	DIV  reduce 32
+	ADD  reduce 32
+	SUB  reduce 32
+	FMUL  reduce 32
+	FDIV  reduce 32
+	FADD  reduce 32
+	GRTEQL  reduce 32
+	GRT  reduce 32
+	LES  reduce 32
+	LESEQL  reduce 32
+	MOD  reduce 32
+	COMMA  reduce 32
+	OP  reduce 32
+	CP  reduce 32
+	IN  reduce 32
+	IF  reduce 32
+	ELSE  reduce 32
+	THEN  reduce 32
+	SEMI  reduce 32
+	PARD  reduce 32
+
+
+24: shift/reduce conflict (shift 69, reduce 35) on FMUL
+state 24
+	fsubstraction : fmultiplication .  (35)
+	fmultiplication : fmultiplication . FMUL fdivision  (39)
+
+	FMUL  shift 69
+	$end  reduce 35
+	VAR  reduce 35
+	NUM  reduce 35
+	FLOAT  reduce 35
+	TRUE  reduce 35
+	FALSE  reduce 35
+	ASSIGN  reduce 35
+	MUL  reduce 35
+	DIV  reduce 35
+	ADD  reduce 35
+	SUB  reduce 35
+	FDIV  reduce 35
+	FADD  reduce 35
+	FSUB  reduce 35
+	GRTEQL  reduce 35
+	GRT  reduce 35
+	LES  reduce 35
+	LESEQL  reduce 35
+	MOD  reduce 35
+	COMMA  reduce 35
+	OP  reduce 35
+	CP  reduce 35
+	IN  reduce 35
+	IF  reduce 35
+	ELSE  reduce 35
+	THEN  reduce 35
+	SEMI  reduce 35
+	PARD  reduce 35
+
+
+25: shift/reduce conflict (shift 70, reduce 38) on FDIV
+state 25
+	fmultiplication : fdivision .  (38)
+	fdivision : fdivision . FDIV mode  (42)
+
+	FDIV  shift 70
+	$end  reduce 38
+	VAR  reduce 38
+	NUM  reduce 38
+	FLOAT  reduce 38
+	TRUE  reduce 38
+	FALSE  reduce 38
+	ASSIGN  reduce 38
+	MUL  reduce 38
+	DIV  reduce 38
+	ADD  reduce 38
+	SUB  reduce 38
+	FMUL  reduce 38
+	FADD  reduce 38
+	FSUB  reduce 38
+	GRTEQL  reduce 38
+	GRT  reduce 38
+	LES  reduce 38
+	LESEQL  reduce 38
+	MOD  reduce 38
+	COMMA  reduce 38
+	OP  reduce 38
+	CP  reduce 38
+	IN  reduce 38
+	IF  reduce 38
+	ELSE  reduce 38
+	THEN  reduce 38
+	SEMI  reduce 38
+	PARD  reduce 38
+
+
+26: shift/reduce conflict (shift 71, reduce 41) on MOD
+state 26
+	fdivision : mode .  (41)
+	mode : mode . MOD abse  (45)
+
+	MOD  shift 71
+	$end  reduce 41
+	VAR  reduce 41
+	NUM  reduce 41
+	FLOAT  reduce 41
+	TRUE  reduce 41
+	FALSE  reduce 41
+	ASSIGN  reduce 41
+	MUL  reduce 41
+	DIV  reduce 41
+	ADD  reduce 41
+	SUB  reduce 41
+	FMUL  reduce 41
+	FDIV  reduce 41
+	FADD  reduce 41
+	FSUB  reduce 41
+	GRTEQL  reduce 41
+	GRT  reduce 41
+	LES  reduce 41
+	LESEQL  reduce 41
+	COMMA  reduce 41
+	OP  reduce 41
+	CP  reduce 41
+	IN  reduce 41
+	IF  reduce 41
+	ELSE  reduce 41
+	THEN  reduce 41
+	SEMI  reduce 41
+	PARD  reduce 41
+
+
+state 27
+	mode : abse .  (44)
+
+	.  reduce 44
+
+
+28: shift/reduce conflict (shift 3, reduce 47) on VAR
+28: shift/reduce conflict (shift 4, reduce 47) on NUM
+28: shift/reduce conflict (shift 5, reduce 47) on FLOAT
+28: shift/reduce conflict (shift 6, reduce 47) on TRUE
+28: shift/reduce conflict (shift 7, reduce 47) on FALSE
+28: shift/reduce conflict (shift 72, reduce 47) on OP
+28: shift/reduce conflict (shift 12, reduce 47) on IF
+state 28
+	abse : funapp .  (47)
+	funapp : funapp . ifelse  (52)
+	funapp : funapp . OP exp3 CP  (53)
+
+	VAR  shift 3
+	NUM  shift 4
+	FLOAT  shift 5
+	TRUE  shift 6
+	FALSE  shift 7
+	OP  shift 72
+	IF  shift 12
+	$end  reduce 47
+	ASSIGN  reduce 47
+	MUL  reduce 47
+	DIV  reduce 47
+	ADD  reduce 47
+	SUB  reduce 47
+	FMUL  reduce 47
+	FDIV  reduce 47
+	FADD  reduce 47
+	FSUB  reduce 47
+	GRTEQL  reduce 47
+	GRT  reduce 47
+	LES  reduce 47
+	LESEQL  reduce 47
+	MOD  reduce 47
+	COMMA  reduce 47
+	CP  reduce 47
+	IN  reduce 47
+	ELSE  reduce 47
+	THEN  reduce 47
+	SEMI  reduce 47
+	PARD  reduce 47
+
+	constants  goto 14
+	ifelse  goto 73
+	tuple  goto 30
+
+
+state 29
+	funapp : ifelse .  (50)
+
+	.  reduce 50
+
+
+state 30
+	ifelse : tuple .  (55)
+
+	.  reduce 55
+
+
+state 31
+	constants : OP . SUB NUM CP  (6)
+	funapp : OP . funapp CP  (51)
+	tuple : OP . tuple_list CP  (58)
+
+	VAR  shift 3
+	NUM  shift 4
+	FLOAT  shift 5
+	TRUE  shift 6
+	FALSE  shift 7
+	SUB  shift 33
+	ABS  shift 8
+	OP  shift 34
+	FUN  shift 10
+	IF  shift 12
+	.  error
+
+	constants  goto 14
+	comparison  goto 53
+	exp3  goto 36
+	addition  goto 18
+	substraction  goto 19
+	multiplication  goto 20
+	division  goto 21
+	faddition  goto 22
+	fsubstraction  goto 23
+	fmultiplication  goto 24
+	fdivision  goto 25
+	mode  goto 26
+	abse  goto 27
+	funapp  goto 47
+	ifelse  goto 29
+	tuple  goto 30
+	tuple_list  goto 48
+
+
+32: shift/reduce conflict (shift 3, reduce 48) on VAR
+32: shift/reduce conflict (shift 4, reduce 48) on NUM
+32: shift/reduce conflict (shift 5, reduce 48) on FLOAT
+32: shift/reduce conflict (shift 6, reduce 48) on TRUE
+32: shift/reduce conflict (shift 7, reduce 48) on FALSE
+32: shift/reduce conflict (shift 72, reduce 48) on OP
+32: shift/reduce conflict (shift 12, reduce 48) on IF
+state 32
+	abse : ABS funapp .  (48)
+	funapp : funapp . ifelse  (52)
+	funapp : funapp . OP exp3 CP  (53)
+
+	VAR  shift 3
+	NUM  shift 4
+	FLOAT  shift 5
+	TRUE  shift 6
+	FALSE  shift 7
+	OP  shift 72
+	IF  shift 12
+	$end  reduce 48
+	ASSIGN  reduce 48
+	MUL  reduce 48
+	DIV  reduce 48
+	ADD  reduce 48
+	SUB  reduce 48
+	FMUL  reduce 48
+	FDIV  reduce 48
+	FADD  reduce 48
+	FSUB  reduce 48
+	GRTEQL  reduce 48
+	GRT  reduce 48
+	LES  reduce 48
+	LESEQL  reduce 48
+	MOD  reduce 48
+	COMMA  reduce 48
+	CP  reduce 48
+	IN  reduce 48
+	ELSE  reduce 48
+	THEN  reduce 48
+	SEMI  reduce 48
+	PARD  reduce 48
+
+	constants  goto 14
+	ifelse  goto 73
+	tuple  goto 30
+
+
+state 33
+	constants : OP SUB . NUM CP  (6)
+
+	NUM  shift 74
+	.  error
+
+
+state 34
+	constants : OP . SUB NUM CP  (6)
+	exp3 : OP . comparison CP  (13)
+	addition : OP . addition CP  (22)
+	substraction : OP . substraction CP  (25)
+	multiplication : OP . multiplication CP  (28)
+	division : OP . division CP  (31)
+	faddition : OP . faddition CP  (34)
+	fsubstraction : OP . fsubstraction CP  (37)
+	fmultiplication : OP . fmultiplication CP  (40)
+	fdivision : OP . fdivision CP  (43)
+	mode : OP . mode CP  (46)
+	abse : OP . abse CP  (49)
+	funapp : OP . funapp CP  (51)
+	tuple : OP . tuple_list CP  (58)
+
+	VAR  shift 3
+	NUM  shift 4
+	FLOAT  shift 5
+	TRUE  shift 6
+	FALSE  shift 7
+	SUB  shift 33
+	ABS  shift 8
+	OP  shift 34
+	FUN  shift 10
+	IF  shift 12
+	.  error
+
+	constants  goto 14
+	comparison  goto 75
+	exp3  goto 36
+	addition  goto 37
+	substraction  goto 38
+	multiplication  goto 39
+	division  goto 40
+	faddition  goto 41
+	fsubstraction  goto 42
+	fmultiplication  goto 43
+	fdivision  goto 44
+	mode  goto 45
+	abse  goto 46
+	funapp  goto 47
+	ifelse  goto 29
+	tuple  goto 30
+	tuple_list  goto 48
+
+
+state 35
+	exp4 : OP comparison . CP  (11)
+	exp3 : comparison .  (12)
+	comparison : comparison . GRT addition  (15)
+	comparison : comparison . GRTEQL addition  (16)
+	comparison : comparison . LES addition  (17)
+	comparison : comparison . LESEQL addition  (18)
+	comparison : comparison . ASSIGN addition  (19)
+
+	ASSIGN  shift 58
+	GRTEQL  shift 59
+	GRT  shift 60
+	LES  shift 61
+	LESEQL  shift 62
+	CP  shift 76
+	COMMA  reduce 12
+
+
+state 36
+	tuple_list : exp3 . COMMA exp3  (59)
+	tuple_list : exp3 . COMMA tuple_list  (60)
+
+	COMMA  shift 77
+	.  error
+
+
+37: shift/reduce conflict (shift 78, reduce 14) on CP
+state 37
+	comparison : addition .  (14)
+	addition : addition . ADD substraction  (21)
+	addition : OP addition . CP  (22)
+
+	ADD  shift 63
+	CP  shift 78
+	ASSIGN  reduce 14
+	GRTEQL  reduce 14
+	GRT  reduce 14
+	LES  reduce 14
+	LESEQL  reduce 14
+	COMMA  reduce 14
+
+
+38: shift/reduce conflict (shift 79, reduce 20) on CP
+state 38
+	addition : substraction .  (20)
+	substraction : substraction . SUB multiplication  (24)
+	substraction : OP substraction . CP  (25)
+
+	SUB  shift 64
+	CP  shift 79
+	ASSIGN  reduce 20
+	ADD  reduce 20
+	GRTEQL  reduce 20
+	GRT  reduce 20
+	LES  reduce 20
+	LESEQL  reduce 20
+	COMMA  reduce 20
+
+
+39: shift/reduce conflict (shift 80, reduce 23) on CP
+state 39
+	substraction : multiplication .  (23)
+	multiplication : multiplication . MUL division  (27)
+	multiplication : OP multiplication . CP  (28)
+
+	MUL  shift 65
+	CP  shift 80
+	ASSIGN  reduce 23
+	ADD  reduce 23
+	SUB  reduce 23
+	GRTEQL  reduce 23
+	GRT  reduce 23
+	LES  reduce 23
+	LESEQL  reduce 23
+	COMMA  reduce 23
+
+
+40: shift/reduce conflict (shift 81, reduce 26) on CP
+state 40
+	multiplication : division .  (26)
+	division : division . DIV faddition  (30)
+	division : OP division . CP  (31)
+
+	DIV  shift 66
+	CP  shift 81
+	ASSIGN  reduce 26
+	MUL  reduce 26
+	ADD  reduce 26
+	SUB  reduce 26
+	GRTEQL  reduce 26
+	GRT  reduce 26
+	LES  reduce 26
+	LESEQL  reduce 26
+	COMMA  reduce 26
+
+
+41: shift/reduce conflict (shift 82, reduce 29) on CP
+state 41
+	division : faddition .  (29)
+	faddition : faddition . FADD fsubstraction  (33)
+	faddition : OP faddition . CP  (34)
+
+	FADD  shift 67
+	CP  shift 82
+	ASSIGN  reduce 29
+	MUL  reduce 29
+	DIV  reduce 29
+	ADD  reduce 29
+	SUB  reduce 29
+	GRTEQL  reduce 29
+	GRT  reduce 29
+	LES  reduce 29
+	LESEQL  reduce 29
+	COMMA  reduce 29
+
+
+42: shift/reduce conflict (shift 83, reduce 32) on CP
+state 42
+	faddition : fsubstraction .  (32)
+	fsubstraction : fsubstraction . FSUB fmultiplication  (36)
+	fsubstraction : OP fsubstraction . CP  (37)
+
+	FSUB  shift 68
+	CP  shift 83
+	ASSIGN  reduce 32
+	MUL  reduce 32
+	DIV  reduce 32
+	ADD  reduce 32
+	SUB  reduce 32
+	FADD  reduce 32
+	GRTEQL  reduce 32
+	GRT  reduce 32
+	LES  reduce 32
+	LESEQL  reduce 32
+	COMMA  reduce 32
+
+
+43: shift/reduce conflict (shift 84, reduce 35) on CP
+state 43
+	fsubstraction : fmultiplication .  (35)
+	fmultiplication : fmultiplication . FMUL fdivision  (39)
+	fmultiplication : OP fmultiplication . CP  (40)
+
+	FMUL  shift 69
+	CP  shift 84
+	ASSIGN  reduce 35
+	MUL  reduce 35
+	DIV  reduce 35
+	ADD  reduce 35
+	SUB  reduce 35
+	FADD  reduce 35
+	FSUB  reduce 35
+	GRTEQL  reduce 35
+	GRT  reduce 35
+	LES  reduce 35
+	LESEQL  reduce 35
+	COMMA  reduce 35
+
+
+44: shift/reduce conflict (shift 85, reduce 38) on CP
+state 44
+	fmultiplication : fdivision .  (38)
+	fdivision : fdivision . FDIV mode  (42)
+	fdivision : OP fdivision . CP  (43)
+
+	FDIV  shift 70
+	CP  shift 85
+	ASSIGN  reduce 38
+	MUL  reduce 38
+	DIV  reduce 38
+	ADD  reduce 38
+	SUB  reduce 38
+	FMUL  reduce 38
+	FADD  reduce 38
+	FSUB  reduce 38
+	GRTEQL  reduce 38
+	GRT  reduce 38
+	LES  reduce 38
+	LESEQL  reduce 38
+	COMMA  reduce 38
+
+
+45: shift/reduce conflict (shift 86, reduce 41) on CP
+state 45
+	fdivision : mode .  (41)
+	mode : mode . MOD abse  (45)
+	mode : OP mode . CP  (46)
+
+	MOD  shift 71
+	CP  shift 86
+	ASSIGN  reduce 41
+	MUL  reduce 41
+	DIV  reduce 41
+	ADD  reduce 41
+	SUB  reduce 41
+	FMUL  reduce 41
+	FDIV  reduce 41
+	FADD  reduce 41
+	FSUB  reduce 41
+	GRTEQL  reduce 41
+	GRT  reduce 41
+	LES  reduce 41
+	LESEQL  reduce 41
+	COMMA  reduce 41
+
+
+46: shift/reduce conflict (shift 87, reduce 44) on CP
+state 46
+	mode : abse .  (44)
+	abse : OP abse . CP  (49)
+
+	CP  shift 87
+	ASSIGN  reduce 44
+	MUL  reduce 44
+	DIV  reduce 44
+	ADD  reduce 44
+	SUB  reduce 44
+	FMUL  reduce 44
+	FDIV  reduce 44
+	FADD  reduce 44
+	FSUB  reduce 44
+	GRTEQL  reduce 44
+	GRT  reduce 44
+	LES  reduce 44
+	LESEQL  reduce 44
+	MOD  reduce 44
+	COMMA  reduce 44
+
+
+47: shift/reduce conflict (shift 88, reduce 47) on CP
+state 47
+	abse : funapp .  (47)
+	funapp : OP funapp . CP  (51)
+	funapp : funapp . ifelse  (52)
+	funapp : funapp . OP exp3 CP  (53)
+
+	VAR  shift 3
+	NUM  shift 4
+	FLOAT  shift 5
+	TRUE  shift 6
+	FALSE  shift 7
+	OP  shift 72
+	CP  shift 88
+	IF  shift 12
+	ASSIGN  reduce 47
+	MUL  reduce 47
+	DIV  reduce 47
+	ADD  reduce 47
+	SUB  reduce 47
+	FMUL  reduce 47
+	FDIV  reduce 47
+	FADD  reduce 47
+	FSUB  reduce 47
+	GRTEQL  reduce 47
+	GRT  reduce 47
+	LES  reduce 47
+	LESEQL  reduce 47
+	MOD  reduce 47
+	COMMA  reduce 47
+
+	constants  goto 14
+	ifelse  goto 73
+	tuple  goto 30
+
+
+state 48
+	tuple : OP tuple_list . CP  (58)
+
+	CP  shift 89
+	.  error
+
+
+state 49
+	funapp : FUN VAR . ARROW exp3  (54)
+
+	ARROW  shift 90
+	.  error
+
+
+state 50
+	def : LET VAR . ASSIGN exp4  (61)
+	varlist : VAR . VAR  (66)
+	varlist : VAR . varlist  (67)
+
+	VAR  shift 91
+	ASSIGN  shift 92
+	.  error
+
+	varlist  goto 93
+
+
+state 51
+	def : LET REC . varlist ASSIGN exp4  (65)
+
+	VAR  shift 94
+	.  error
+
+	varlist  goto 95
+
+
+state 52
+	def : LET varlist . ASSIGN exp4  (64)
+
+	ASSIGN  shift 96
+	.  error
+
+
+53: shift/reduce conflict (shift 58, reduce 12) on ASSIGN
+53: shift/reduce conflict (shift 59, reduce 12) on GRTEQL
+53: shift/reduce conflict (shift 60, reduce 12) on GRT
+53: shift/reduce conflict (shift 61, reduce 12) on LES
+53: shift/reduce conflict (shift 62, reduce 12) on LESEQL
+state 53
+	exp3 : comparison .  (12)
+	comparison : comparison . GRT addition  (15)
+	comparison : comparison . GRTEQL addition  (16)
+	comparison : comparison . LES addition  (17)
+	comparison : comparison . LESEQL addition  (18)
+	comparison : comparison . ASSIGN addition  (19)
+
+	ASSIGN  shift 58
+	GRTEQL  shift 59
+	GRT  shift 60
+	LES  shift 61
+	LESEQL  shift 62
+	$end  reduce 12
+	VAR  reduce 12
+	NUM  reduce 12
+	FLOAT  reduce 12
+	TRUE  reduce 12
+	FALSE  reduce 12
+	MUL  reduce 12
+	DIV  reduce 12
+	ADD  reduce 12
+	SUB  reduce 12
+	FMUL  reduce 12
+	FDIV  reduce 12
+	FADD  reduce 12
+	FSUB  reduce 12
+	MOD  reduce 12
+	COMMA  reduce 12
+	OP  reduce 12
+	CP  reduce 12
+	IN  reduce 12
+	IF  reduce 12
+	ELSE  reduce 12
+	THEN  reduce 12
+	SEMI  reduce 12
+	PARD  reduce 12
+
+
+state 54
+	ifelse : IF exp3 . THEN exp3 ELSE exp3  (56)
+
+	THEN  shift 97
+	.  error
+
+
+state 55
+	exp2 : def IN . exp4  (9)
+
+	VAR  shift 3
+	NUM  shift 4
+	FLOAT  shift 5
+	TRUE  shift 6
+	FALSE  shift 7
+	ABS  shift 8
+	OP  shift 9
+	FUN  shift 10
+	IF  shift 12
+	.  error
+
+	constants  goto 14
+	exp4  goto 98
+	comparison  goto 17
+	addition  goto 18
+	substraction  goto 19
+	multiplication  goto 20
+	division  goto 21
+	faddition  goto 22
+	fsubstraction  goto 23
+	fmultiplication  goto 24
+	fdivision  goto 25
+	mode  goto 26
+	abse  goto 27
+	funapp  goto 28
+	ifelse  goto 29
+	tuple  goto 30
+
+
+state 56
+	def : def SEMI . def  (62)
+
+	LET  shift 11
+	.  error
+
+	def  goto 99
+
+
+state 57
+	def : def PARD . def  (63)
+
+	LET  shift 11
+	.  error
+
+	def  goto 100
+
+
+state 58
+	comparison : comparison ASSIGN . addition  (19)
+
+	VAR  shift 3
+	NUM  shift 4
+	FLOAT  shift 5
+	TRUE  shift 6
+	FALSE  shift 7
+	ABS  shift 8
+	OP  shift 101
+	FUN  shift 10
+	IF  shift 12
+	.  error
+
+	constants  goto 14
+	addition  goto 102
+	substraction  goto 19
+	multiplication  goto 20
+	division  goto 21
+	faddition  goto 22
+	fsubstraction  goto 23
+	fmultiplication  goto 24
+	fdivision  goto 25
+	mode  goto 26
+	abse  goto 27
+	funapp  goto 28
+	ifelse  goto 29
+	tuple  goto 30
+
+
+state 59
+	comparison : comparison GRTEQL . addition  (16)
+
+	VAR  shift 3
+	NUM  shift 4
+	FLOAT  shift 5
+	TRUE  shift 6
+	FALSE  shift 7
+	ABS  shift 8
+	OP  shift 101
+	FUN  shift 10
+	IF  shift 12
+	.  error
+
+	constants  goto 14
+	addition  goto 103
+	substraction  goto 19
+	multiplication  goto 20
+	division  goto 21
+	faddition  goto 22
+	fsubstraction  goto 23
+	fmultiplication  goto 24
+	fdivision  goto 25
+	mode  goto 26
+	abse  goto 27
+	funapp  goto 28
+	ifelse  goto 29
+	tuple  goto 30
+
+
+state 60
+	comparison : comparison GRT . addition  (15)
+
+	VAR  shift 3
+	NUM  shift 4
+	FLOAT  shift 5
+	TRUE  shift 6
+	FALSE  shift 7
+	ABS  shift 8
+	OP  shift 101
+	FUN  shift 10
+	IF  shift 12
+	.  error
+
+	constants  goto 14
+	addition  goto 104
+	substraction  goto 19
+	multiplication  goto 20
+	division  goto 21
+	faddition  goto 22
+	fsubstraction  goto 23
+	fmultiplication  goto 24
+	fdivision  goto 25
+	mode  goto 26
+	abse  goto 27
+	funapp  goto 28
+	ifelse  goto 29
+	tuple  goto 30
+
+
+state 61
+	comparison : comparison LES . addition  (17)
+
+	VAR  shift 3
+	NUM  shift 4
+	FLOAT  shift 5
+	TRUE  shift 6
+	FALSE  shift 7
+	ABS  shift 8
+	OP  shift 101
+	FUN  shift 10
+	IF  shift 12
+	.  error
+
+	constants  goto 14
+	addition  goto 105
+	substraction  goto 19
+	multiplication  goto 20
+	division  goto 21
+	faddition  goto 22
+	fsubstraction  goto 23
+	fmultiplication  goto 24
+	fdivision  goto 25
+	mode  goto 26
+	abse  goto 27
+	funapp  goto 28
+	ifelse  goto 29
+	tuple  goto 30
+
+
+state 62
+	comparison : comparison LESEQL . addition  (18)
+
+	VAR  shift 3
+	NUM  shift 4
+	FLOAT  shift 5
+	TRUE  shift 6
+	FALSE  shift 7
+	ABS  shift 8
+	OP  shift 101
+	FUN  shift 10
+	IF  shift 12
+	.  error
+
+	constants  goto 14
+	addition  goto 106
+	substraction  goto 19
+	multiplication  goto 20
+	division  goto 21
+	faddition  goto 22
+	fsubstraction  goto 23
+	fmultiplication  goto 24
+	fdivision  goto 25
+	mode  goto 26
+	abse  goto 27
+	funapp  goto 28
+	ifelse  goto 29
+	tuple  goto 30
+
+
+state 63
+	addition : addition ADD . substraction  (21)
+
+	VAR  shift 3
+	NUM  shift 4
+	FLOAT  shift 5
+	TRUE  shift 6
+	FALSE  shift 7
+	ABS  shift 8
+	OP  shift 107
+	FUN  shift 10
+	IF  shift 12
+	.  error
+
+	constants  goto 14
+	substraction  goto 108
+	multiplication  goto 20
+	division  goto 21
+	faddition  goto 22
+	fsubstraction  goto 23
+	fmultiplication  goto 24
+	fdivision  goto 25
+	mode  goto 26
+	abse  goto 27
+	funapp  goto 28
+	ifelse  goto 29
+	tuple  goto 30
+
+
+state 64
+	substraction : substraction SUB . multiplication  (24)
+
+	VAR  shift 3
+	NUM  shift 4
+	FLOAT  shift 5
+	TRUE  shift 6
+	FALSE  shift 7
+	ABS  shift 8
+	OP  shift 109
+	FUN  shift 10
+	IF  shift 12
+	.  error
+
+	constants  goto 14
+	multiplication  goto 110
+	division  goto 21
+	faddition  goto 22
+	fsubstraction  goto 23
+	fmultiplication  goto 24
+	fdivision  goto 25
+	mode  goto 26
+	abse  goto 27
+	funapp  goto 28
+	ifelse  goto 29
+	tuple  goto 30
+
+
+state 65
+	multiplication : multiplication MUL . division  (27)
+
+	VAR  shift 3
+	NUM  shift 4
+	FLOAT  shift 5
+	TRUE  shift 6
+	FALSE  shift 7
+	ABS  shift 8
+	OP  shift 111
+	FUN  shift 10
+	IF  shift 12
+	.  error
+
+	constants  goto 14
+	division  goto 112
+	faddition  goto 22
+	fsubstraction  goto 23
+	fmultiplication  goto 24
+	fdivision  goto 25
+	mode  goto 26
+	abse  goto 27
+	funapp  goto 28
+	ifelse  goto 29
+	tuple  goto 30
+
+
+state 66
+	division : division DIV . faddition  (30)
+
+	VAR  shift 3
+	NUM  shift 4
+	FLOAT  shift 5
+	TRUE  shift 6
+	FALSE  shift 7
+	ABS  shift 8
+	OP  shift 113
+	FUN  shift 10
+	IF  shift 12
+	.  error
+
+	constants  goto 14
+	faddition  goto 114
+	fsubstraction  goto 23
+	fmultiplication  goto 24
+	fdivision  goto 25
+	mode  goto 26
+	abse  goto 27
+	funapp  goto 28
+	ifelse  goto 29
+	tuple  goto 30
+
+
+state 67
+	faddition : faddition FADD . fsubstraction  (33)
+
+	VAR  shift 3
+	NUM  shift 4
+	FLOAT  shift 5
+	TRUE  shift 6
+	FALSE  shift 7
+	ABS  shift 8
+	OP  shift 115
+	FUN  shift 10
+	IF  shift 12
+	.  error
+
+	constants  goto 14
+	fsubstraction  goto 116
+	fmultiplication  goto 24
+	fdivision  goto 25
+	mode  goto 26
+	abse  goto 27
+	funapp  goto 28
+	ifelse  goto 29
+	tuple  goto 30
+
+
+state 68
+	fsubstraction : fsubstraction FSUB . fmultiplication  (36)
+
+	VAR  shift 3
+	NUM  shift 4
+	FLOAT  shift 5
+	TRUE  shift 6
+	FALSE  shift 7
+	ABS  shift 8
+	OP  shift 117
+	FUN  shift 10
+	IF  shift 12
+	.  error
+
+	constants  goto 14
+	fmultiplication  goto 118
+	fdivision  goto 25
+	mode  goto 26
+	abse  goto 27
+	funapp  goto 28
+	ifelse  goto 29
+	tuple  goto 30
+
+
+state 69
+	fmultiplication : fmultiplication FMUL . fdivision  (39)
+
+	VAR  shift 3
+	NUM  shift 4
+	FLOAT  shift 5
+	TRUE  shift 6
+	FALSE  shift 7
+	ABS  shift 8
+	OP  shift 119
+	FUN  shift 10
+	IF  shift 12
+	.  error
+
+	constants  goto 14
+	fdivision  goto 120
+	mode  goto 26
+	abse  goto 27
+	funapp  goto 28
+	ifelse  goto 29
+	tuple  goto 30
+
+
+state 70
+	fdivision : fdivision FDIV . mode  (42)
+
+	VAR  shift 3
+	NUM  shift 4
+	FLOAT  shift 5
+	TRUE  shift 6
+	FALSE  shift 7
+	ABS  shift 8
+	OP  shift 121
+	FUN  shift 10
+	IF  shift 12
+	.  error
+
+	constants  goto 14
+	mode  goto 122
+	abse  goto 27
+	funapp  goto 28
+	ifelse  goto 29
+	tuple  goto 30
+
+
+state 71
+	mode : mode MOD . abse  (45)
+
+	VAR  shift 3
+	NUM  shift 4
+	FLOAT  shift 5
+	TRUE  shift 6
+	FALSE  shift 7
+	ABS  shift 8
+	OP  shift 123
+	FUN  shift 10
+	IF  shift 12
+	.  error
+
+	constants  goto 14
+	abse  goto 124
+	funapp  goto 28
+	ifelse  goto 29
+	tuple  goto 30
+
+
+state 72
+	constants : OP . SUB NUM CP  (6)
+	funapp : funapp OP . exp3 CP  (53)
+	tuple : OP . tuple_list CP  (58)
+
+	VAR  shift 3
+	NUM  shift 4
+	FLOAT  shift 5
+	TRUE  shift 6
+	FALSE  shift 7
+	SUB  shift 33
+	ABS  shift 8
+	OP  shift 34
+	FUN  shift 10
+	IF  shift 12
+	.  error
+
+	constants  goto 14
+	comparison  goto 53
+	exp3  goto 125
+	addition  goto 18
+	substraction  goto 19
+	multiplication  goto 20
+	division  goto 21
+	faddition  goto 22
+	fsubstraction  goto 23
+	fmultiplication  goto 24
+	fdivision  goto 25
+	mode  goto 26
+	abse  goto 27
+	funapp  goto 28
+	ifelse  goto 29
+	tuple  goto 30
+	tuple_list  goto 48
+
+
+state 73
+	funapp : funapp ifelse .  (52)
+
+	.  reduce 52
+
+
+state 74
+	constants : OP SUB NUM . CP  (6)
+
+	CP  shift 126
+	.  error
+
+
+state 75
+	exp3 : comparison .  (12)
+	exp3 : OP comparison . CP  (13)
+	comparison : comparison . GRT addition  (15)
+	comparison : comparison . GRTEQL addition  (16)
+	comparison : comparison . LES addition  (17)
+	comparison : comparison . LESEQL addition  (18)
+	comparison : comparison . ASSIGN addition  (19)
+
+	ASSIGN  shift 58
+	GRTEQL  shift 59
+	GRT  shift 60
+	LES  shift 61
+	LESEQL  shift 62
+	CP  shift 127
+	COMMA  reduce 12
+
+
+state 76
+	exp4 : OP comparison CP .  (11)
+
+	.  reduce 11
+
+
+state 77
+	tuple_list : exp3 COMMA . exp3  (59)
+	tuple_list : exp3 COMMA . tuple_list  (60)
+
+	VAR  shift 3
+	NUM  shift 4
+	FLOAT  shift 5
+	TRUE  shift 6
+	FALSE  shift 7
+	ABS  shift 8
+	OP  shift 34
+	FUN  shift 10
+	IF  shift 12
+	.  error
+
+	constants  goto 14
+	comparison  goto 53
+	exp3  goto 128
+	addition  goto 18
+	substraction  goto 19
+	multiplication  goto 20
+	division  goto 21
+	faddition  goto 22
+	fsubstraction  goto 23
+	fmultiplication  goto 24
+	fdivision  goto 25
+	mode  goto 26
+	abse  goto 27
+	funapp  goto 28
+	ifelse  goto 29
+	tuple  goto 30
+	tuple_list  goto 129
+
+
+state 78
+	addition : OP addition CP .  (22)
+
+	.  reduce 22
+
+
+state 79
+	substraction : OP substraction CP .  (25)
+
+	.  reduce 25
+
+
+state 80
+	multiplication : OP multiplication CP .  (28)
+
+	.  reduce 28
+
+
+state 81
+	division : OP division CP .  (31)
+
+	.  reduce 31
+
+
+state 82
+	faddition : OP faddition CP .  (34)
+
+	.  reduce 34
+
+
+state 83
+	fsubstraction : OP fsubstraction CP .  (37)
+
+	.  reduce 37
+
+
+state 84
+	fmultiplication : OP fmultiplication CP .  (40)
+
+	.  reduce 40
+
+
+state 85
+	fdivision : OP fdivision CP .  (43)
+
+	.  reduce 43
+
+
+state 86
+	mode : OP mode CP .  (46)
+
+	.  reduce 46
+
+
+state 87
+	abse : OP abse CP .  (49)
+
+	.  reduce 49
+
+
+state 88
+	funapp : OP funapp CP .  (51)
+
+	.  reduce 51
+
+
+state 89
+	tuple : OP tuple_list CP .  (58)
+
+	.  reduce 58
+
+
+state 90
+	funapp : FUN VAR ARROW . exp3  (54)
+
+	VAR  shift 3
+	NUM  shift 4
+	FLOAT  shift 5
+	TRUE  shift 6
+	FALSE  shift 7
+	ABS  shift 8
+	OP  shift 34
+	FUN  shift 10
+	IF  shift 12
+	.  error
+
+	constants  goto 14
+	comparison  goto 53
+	exp3  goto 130
+	addition  goto 18
+	substraction  goto 19
+	multiplication  goto 20
+	division  goto 21
+	faddition  goto 22
+	fsubstraction  goto 23
+	fmultiplication  goto 24
+	fdivision  goto 25
+	mode  goto 26
+	abse  goto 27
+	funapp  goto 28
+	ifelse  goto 29
+	tuple  goto 30
+
+
+state 91
+	varlist : VAR . VAR  (66)
+	varlist : VAR VAR .  (66)
+	varlist : VAR . varlist  (67)
+
+	VAR  shift 91
+	ASSIGN  reduce 66
+
+	varlist  goto 93
+
+
+state 92
+	def : LET VAR ASSIGN . exp4  (61)
+
+	VAR  shift 3
+	NUM  shift 4
+	FLOAT  shift 5
+	TRUE  shift 6
+	FALSE  shift 7
+	ABS  shift 8
+	OP  shift 9
+	FUN  shift 10
+	IF  shift 12
+	.  error
+
+	constants  goto 14
+	exp4  goto 131
+	comparison  goto 17
+	addition  goto 18
+	substraction  goto 19
+	multiplication  goto 20
+	division  goto 21
+	faddition  goto 22
+	fsubstraction  goto 23
+	fmultiplication  goto 24
+	fdivision  goto 25
+	mode  goto 26
+	abse  goto 27
+	funapp  goto 28
+	ifelse  goto 29
+	tuple  goto 30
+
+
+state 93
+	varlist : VAR varlist .  (67)
+
+	.  reduce 67
+
+
+state 94
+	varlist : VAR . VAR  (66)
+	varlist : VAR . varlist  (67)
+
+	VAR  shift 91
+	.  error
+
+	varlist  goto 93
+
+
+state 95
+	def : LET REC varlist . ASSIGN exp4  (65)
+
+	ASSIGN  shift 132
+	.  error
+
+
+state 96
+	def : LET varlist ASSIGN . exp4  (64)
+
+	VAR  shift 3
+	NUM  shift 4
+	FLOAT  shift 5
+	TRUE  shift 6
+	FALSE  shift 7
+	ABS  shift 8
+	OP  shift 9
+	FUN  shift 10
+	IF  shift 12
+	.  error
+
+	constants  goto 14
+	exp4  goto 133
+	comparison  goto 17
+	addition  goto 18
+	substraction  goto 19
+	multiplication  goto 20
+	division  goto 21
+	faddition  goto 22
+	fsubstraction  goto 23
+	fmultiplication  goto 24
+	fdivision  goto 25
+	mode  goto 26
+	abse  goto 27
+	funapp  goto 28
+	ifelse  goto 29
+	tuple  goto 30
+
+
+state 97
+	ifelse : IF exp3 THEN . exp3 ELSE exp3  (56)
+
+	VAR  shift 3
+	NUM  shift 4
+	FLOAT  shift 5
+	TRUE  shift 6
+	FALSE  shift 7
+	ABS  shift 8
+	OP  shift 34
+	FUN  shift 10
+	IF  shift 12
+	.  error
+
+	constants  goto 14
+	comparison  goto 53
+	exp3  goto 134
+	addition  goto 18
+	substraction  goto 19
+	multiplication  goto 20
+	division  goto 21
+	faddition  goto 22
+	fsubstraction  goto 23
+	fmultiplication  goto 24
+	fdivision  goto 25
+	mode  goto 26
+	abse  goto 27
+	funapp  goto 28
+	ifelse  goto 29
+	tuple  goto 30
+
+
+state 98
+	exp2 : def IN exp4 .  (9)
+
+	.  reduce 9
+
+
+99: shift/reduce conflict (shift 56, reduce 62) on SEMI
+99: shift/reduce conflict (shift 57, reduce 62) on PARD
+state 99
+	def : def . SEMI def  (62)
+	def : def SEMI def .  (62)
+	def : def . PARD def  (63)
+
+	SEMI  shift 56
+	PARD  shift 57
+	$end  reduce 62
+	IN  reduce 62
+
+
+100: shift/reduce conflict (shift 56, reduce 63) on SEMI
+100: shift/reduce conflict (shift 57, reduce 63) on PARD
+state 100
+	def : def . SEMI def  (62)
+	def : def . PARD def  (63)
+	def : def PARD def .  (63)
+
+	SEMI  shift 56
+	PARD  shift 57
+	$end  reduce 63
+	IN  reduce 63
+
+
+state 101
+	constants : OP . SUB NUM CP  (6)
+	addition : OP . addition CP  (22)
+	substraction : OP . substraction CP  (25)
+	multiplication : OP . multiplication CP  (28)
+	division : OP . division CP  (31)
+	faddition : OP . faddition CP  (34)
+	fsubstraction : OP . fsubstraction CP  (37)
+	fmultiplication : OP . fmultiplication CP  (40)
+	fdivision : OP . fdivision CP  (43)
+	mode : OP . mode CP  (46)
+	abse : OP . abse CP  (49)
+	funapp : OP . funapp CP  (51)
+	tuple : OP . tuple_list CP  (58)
+
+	VAR  shift 3
+	NUM  shift 4
+	FLOAT  shift 5
+	TRUE  shift 6
+	FALSE  shift 7
+	SUB  shift 33
+	ABS  shift 8
+	OP  shift 34
+	FUN  shift 10
+	IF  shift 12
+	.  error
+
+	constants  goto 14
+	comparison  goto 53
+	exp3  goto 36
+	addition  goto 37
+	substraction  goto 38
+	multiplication  goto 39
+	division  goto 40
+	faddition  goto 41
+	fsubstraction  goto 42
+	fmultiplication  goto 43
+	fdivision  goto 44
+	mode  goto 45
+	abse  goto 46
+	funapp  goto 47
+	ifelse  goto 29
+	tuple  goto 30
+	tuple_list  goto 48
+
+
+102: shift/reduce conflict (shift 63, reduce 19) on ADD
+state 102
+	comparison : comparison ASSIGN addition .  (19)
+	addition : addition . ADD substraction  (21)
+
+	ADD  shift 63
+	$end  reduce 19
+	VAR  reduce 19
+	NUM  reduce 19
+	FLOAT  reduce 19
+	TRUE  reduce 19
+	FALSE  reduce 19
+	ASSIGN  reduce 19
+	MUL  reduce 19
+	DIV  reduce 19
+	SUB  reduce 19
+	FMUL  reduce 19
+	FDIV  reduce 19
+	FADD  reduce 19
+	FSUB  reduce 19
+	GRTEQL  reduce 19
+	GRT  reduce 19
+	LES  reduce 19
+	LESEQL  reduce 19
+	MOD  reduce 19
+	COMMA  reduce 19
+	OP  reduce 19
+	CP  reduce 19
+	IN  reduce 19
+	IF  reduce 19
+	ELSE  reduce 19
+	THEN  reduce 19
+	SEMI  reduce 19
+	PARD  reduce 19
+
+
+103: shift/reduce conflict (shift 63, reduce 16) on ADD
+state 103
+	comparison : comparison GRTEQL addition .  (16)
+	addition : addition . ADD substraction  (21)
+
+	ADD  shift 63
+	$end  reduce 16
+	VAR  reduce 16
+	NUM  reduce 16
+	FLOAT  reduce 16
+	TRUE  reduce 16
+	FALSE  reduce 16
+	ASSIGN  reduce 16
+	MUL  reduce 16
+	DIV  reduce 16
+	SUB  reduce 16
+	FMUL  reduce 16
+	FDIV  reduce 16
+	FADD  reduce 16
+	FSUB  reduce 16
+	GRTEQL  reduce 16
+	GRT  reduce 16
+	LES  reduce 16
+	LESEQL  reduce 16
+	MOD  reduce 16
+	COMMA  reduce 16
+	OP  reduce 16
+	CP  reduce 16
+	IN  reduce 16
+	IF  reduce 16
+	ELSE  reduce 16
+	THEN  reduce 16
+	SEMI  reduce 16
+	PARD  reduce 16
+
+
+104: shift/reduce conflict (shift 63, reduce 15) on ADD
+state 104
+	comparison : comparison GRT addition .  (15)
+	addition : addition . ADD substraction  (21)
+
+	ADD  shift 63
+	$end  reduce 15
+	VAR  reduce 15
+	NUM  reduce 15
+	FLOAT  reduce 15
+	TRUE  reduce 15
+	FALSE  reduce 15
+	ASSIGN  reduce 15
+	MUL  reduce 15
+	DIV  reduce 15
+	SUB  reduce 15
+	FMUL  reduce 15
+	FDIV  reduce 15
+	FADD  reduce 15
+	FSUB  reduce 15
+	GRTEQL  reduce 15
+	GRT  reduce 15
+	LES  reduce 15
+	LESEQL  reduce 15
+	MOD  reduce 15
+	COMMA  reduce 15
+	OP  reduce 15
+	CP  reduce 15
+	IN  reduce 15
+	IF  reduce 15
+	ELSE  reduce 15
+	THEN  reduce 15
+	SEMI  reduce 15
+	PARD  reduce 15
+
+
+105: shift/reduce conflict (shift 63, reduce 17) on ADD
+state 105
+	comparison : comparison LES addition .  (17)
+	addition : addition . ADD substraction  (21)
+
+	ADD  shift 63
+	$end  reduce 17
+	VAR  reduce 17
+	NUM  reduce 17
+	FLOAT  reduce 17
+	TRUE  reduce 17
+	FALSE  reduce 17
+	ASSIGN  reduce 17
+	MUL  reduce 17
+	DIV  reduce 17
+	SUB  reduce 17
+	FMUL  reduce 17
+	FDIV  reduce 17
+	FADD  reduce 17
+	FSUB  reduce 17
+	GRTEQL  reduce 17
+	GRT  reduce 17
+	LES  reduce 17
+	LESEQL  reduce 17
+	MOD  reduce 17
+	COMMA  reduce 17
+	OP  reduce 17
+	CP  reduce 17
+	IN  reduce 17
+	IF  reduce 17
+	ELSE  reduce 17
+	THEN  reduce 17
+	SEMI  reduce 17
+	PARD  reduce 17
+
+
+106: shift/reduce conflict (shift 63, reduce 18) on ADD
+state 106
+	comparison : comparison LESEQL addition .  (18)
+	addition : addition . ADD substraction  (21)
+
+	ADD  shift 63
+	$end  reduce 18
+	VAR  reduce 18
+	NUM  reduce 18
+	FLOAT  reduce 18
+	TRUE  reduce 18
+	FALSE  reduce 18
+	ASSIGN  reduce 18
+	MUL  reduce 18
+	DIV  reduce 18
+	SUB  reduce 18
+	FMUL  reduce 18
+	FDIV  reduce 18
+	FADD  reduce 18
+	FSUB  reduce 18
+	GRTEQL  reduce 18
+	GRT  reduce 18
+	LES  reduce 18
+	LESEQL  reduce 18
+	MOD  reduce 18
+	COMMA  reduce 18
+	OP  reduce 18
+	CP  reduce 18
+	IN  reduce 18
+	IF  reduce 18
+	ELSE  reduce 18
+	THEN  reduce 18
+	SEMI  reduce 18
+	PARD  reduce 18
+
+
+state 107
+	constants : OP . SUB NUM CP  (6)
+	substraction : OP . substraction CP  (25)
+	multiplication : OP . multiplication CP  (28)
+	division : OP . division CP  (31)
+	faddition : OP . faddition CP  (34)
+	fsubstraction : OP . fsubstraction CP  (37)
+	fmultiplication : OP . fmultiplication CP  (40)
+	fdivision : OP . fdivision CP  (43)
+	mode : OP . mode CP  (46)
+	abse : OP . abse CP  (49)
+	funapp : OP . funapp CP  (51)
+	tuple : OP . tuple_list CP  (58)
+
+	VAR  shift 3
+	NUM  shift 4
+	FLOAT  shift 5
+	TRUE  shift 6
+	FALSE  shift 7
+	SUB  shift 33
+	ABS  shift 8
+	OP  shift 34
+	FUN  shift 10
+	IF  shift 12
+	.  error
+
+	constants  goto 14
+	comparison  goto 53
+	exp3  goto 36
+	addition  goto 18
+	substraction  goto 38
+	multiplication  goto 39
+	division  goto 40
+	faddition  goto 41
+	fsubstraction  goto 42
+	fmultiplication  goto 43
+	fdivision  goto 44
+	mode  goto 45
+	abse  goto 46
+	funapp  goto 47
+	ifelse  goto 29
+	tuple  goto 30
+	tuple_list  goto 48
+
+
+state 108
+	addition : addition ADD substraction .  (21)
+	substraction : substraction . SUB multiplication  (24)
+
+	.  reduce 21
+
+
+state 109
+	constants : OP . SUB NUM CP  (6)
+	multiplication : OP . multiplication CP  (28)
+	division : OP . division CP  (31)
+	faddition : OP . faddition CP  (34)
+	fsubstraction : OP . fsubstraction CP  (37)
+	fmultiplication : OP . fmultiplication CP  (40)
+	fdivision : OP . fdivision CP  (43)
+	mode : OP . mode CP  (46)
+	abse : OP . abse CP  (49)
+	funapp : OP . funapp CP  (51)
+	tuple : OP . tuple_list CP  (58)
+
+	VAR  shift 3
+	NUM  shift 4
+	FLOAT  shift 5
+	TRUE  shift 6
+	FALSE  shift 7
+	SUB  shift 33
+	ABS  shift 8
+	OP  shift 34
+	FUN  shift 10
+	IF  shift 12
+	.  error
+
+	constants  goto 14
+	comparison  goto 53
+	exp3  goto 36
+	addition  goto 18
+	substraction  goto 19
+	multiplication  goto 39
+	division  goto 40
+	faddition  goto 41
+	fsubstraction  goto 42
+	fmultiplication  goto 43
+	fdivision  goto 44
+	mode  goto 45
+	abse  goto 46
+	funapp  goto 47
+	ifelse  goto 29
+	tuple  goto 30
+	tuple_list  goto 48
+
+
+state 110
+	substraction : substraction SUB multiplication .  (24)
+	multiplication : multiplication . MUL division  (27)
+
+	MUL  shift 65
+	$end  reduce 24
+	VAR  reduce 24
+	NUM  reduce 24
+	FLOAT  reduce 24
+	TRUE  reduce 24
+	FALSE  reduce 24
+	ASSIGN  reduce 24
+	DIV  reduce 24
+	ADD  reduce 24
+	SUB  reduce 24
+	FMUL  reduce 24
+	FDIV  reduce 24
+	FADD  reduce 24
+	FSUB  reduce 24
+	GRTEQL  reduce 24
+	GRT  reduce 24
+	LES  reduce 24
+	LESEQL  reduce 24
+	MOD  reduce 24
+	COMMA  reduce 24
+	OP  reduce 24
+	CP  reduce 24
+	IN  reduce 24
+	IF  reduce 24
+	ELSE  reduce 24
+	THEN  reduce 24
+	SEMI  reduce 24
+	PARD  reduce 24
+
+
+state 111
+	constants : OP . SUB NUM CP  (6)
+	division : OP . division CP  (31)
+	faddition : OP . faddition CP  (34)
+	fsubstraction : OP . fsubstraction CP  (37)
+	fmultiplication : OP . fmultiplication CP  (40)
+	fdivision : OP . fdivision CP  (43)
+	mode : OP . mode CP  (46)
+	abse : OP . abse CP  (49)
+	funapp : OP . funapp CP  (51)
+	tuple : OP . tuple_list CP  (58)
+
+	VAR  shift 3
+	NUM  shift 4
+	FLOAT  shift 5
+	TRUE  shift 6
+	FALSE  shift 7
+	SUB  shift 33
+	ABS  shift 8
+	OP  shift 34
+	FUN  shift 10
+	IF  shift 12
+	.  error
+
+	constants  goto 14
+	comparison  goto 53
+	exp3  goto 36
+	addition  goto 18
+	substraction  goto 19
+	multiplication  goto 20
+	division  goto 40
+	faddition  goto 41
+	fsubstraction  goto 42
+	fmultiplication  goto 43
+	fdivision  goto 44
+	mode  goto 45
+	abse  goto 46
+	funapp  goto 47
+	ifelse  goto 29
+	tuple  goto 30
+	tuple_list  goto 48
+
+
+state 112
+	multiplication : multiplication MUL division .  (27)
+	division : division . DIV faddition  (30)
+
+	.  reduce 27
+
+
+state 113
+	constants : OP . SUB NUM CP  (6)
+	faddition : OP . faddition CP  (34)
+	fsubstraction : OP . fsubstraction CP  (37)
+	fmultiplication : OP . fmultiplication CP  (40)
+	fdivision : OP . fdivision CP  (43)
+	mode : OP . mode CP  (46)
+	abse : OP . abse CP  (49)
+	funapp : OP . funapp CP  (51)
+	tuple : OP . tuple_list CP  (58)
+
+	VAR  shift 3
+	NUM  shift 4
+	FLOAT  shift 5
+	TRUE  shift 6
+	FALSE  shift 7
+	SUB  shift 33
+	ABS  shift 8
+	OP  shift 34
+	FUN  shift 10
+	IF  shift 12
+	.  error
+
+	constants  goto 14
+	comparison  goto 53
+	exp3  goto 36
+	addition  goto 18
+	substraction  goto 19
+	multiplication  goto 20
+	division  goto 21
+	faddition  goto 41
+	fsubstraction  goto 42
+	fmultiplication  goto 43
+	fdivision  goto 44
+	mode  goto 45
+	abse  goto 46
+	funapp  goto 47
+	ifelse  goto 29
+	tuple  goto 30
+	tuple_list  goto 48
+
+
+114: shift/reduce conflict (shift 67, reduce 30) on FADD
+state 114
+	division : division DIV faddition .  (30)
+	faddition : faddition . FADD fsubstraction  (33)
+
+	FADD  shift 67
+	$end  reduce 30
+	VAR  reduce 30
+	NUM  reduce 30
+	FLOAT  reduce 30
+	TRUE  reduce 30
+	FALSE  reduce 30
+	ASSIGN  reduce 30
+	MUL  reduce 30
+	DIV  reduce 30
+	ADD  reduce 30
+	SUB  reduce 30
+	FMUL  reduce 30
+	FDIV  reduce 30
+	FSUB  reduce 30
+	GRTEQL  reduce 30
+	GRT  reduce 30
+	LES  reduce 30
+	LESEQL  reduce 30
+	MOD  reduce 30
+	COMMA  reduce 30
+	OP  reduce 30
+	CP  reduce 30
+	IN  reduce 30
+	IF  reduce 30
+	ELSE  reduce 30
+	THEN  reduce 30
+	SEMI  reduce 30
+	PARD  reduce 30
+
+
+state 115
+	constants : OP . SUB NUM CP  (6)
+	fsubstraction : OP . fsubstraction CP  (37)
+	fmultiplication : OP . fmultiplication CP  (40)
+	fdivision : OP . fdivision CP  (43)
+	mode : OP . mode CP  (46)
+	abse : OP . abse CP  (49)
+	funapp : OP . funapp CP  (51)
+	tuple : OP . tuple_list CP  (58)
+
+	VAR  shift 3
+	NUM  shift 4
+	FLOAT  shift 5
+	TRUE  shift 6
+	FALSE  shift 7
+	SUB  shift 33
+	ABS  shift 8
+	OP  shift 34
+	FUN  shift 10
+	IF  shift 12
+	.  error
+
+	constants  goto 14
+	comparison  goto 53
+	exp3  goto 36
+	addition  goto 18
+	substraction  goto 19
+	multiplication  goto 20
+	division  goto 21
+	faddition  goto 22
+	fsubstraction  goto 42
+	fmultiplication  goto 43
+	fdivision  goto 44
+	mode  goto 45
+	abse  goto 46
+	funapp  goto 47
+	ifelse  goto 29
+	tuple  goto 30
+	tuple_list  goto 48
+
+
+116: shift/reduce conflict (shift 68, reduce 33) on FSUB
+state 116
+	faddition : faddition FADD fsubstraction .  (33)
+	fsubstraction : fsubstraction . FSUB fmultiplication  (36)
+
+	FSUB  shift 68
+	$end  reduce 33
+	VAR  reduce 33
+	NUM  reduce 33
+	FLOAT  reduce 33
+	TRUE  reduce 33
+	FALSE  reduce 33
+	ASSIGN  reduce 33
+	MUL  reduce 33
+	DIV  reduce 33
+	ADD  reduce 33
+	SUB  reduce 33
+	FMUL  reduce 33
+	FDIV  reduce 33
+	FADD  reduce 33
+	GRTEQL  reduce 33
+	GRT  reduce 33
+	LES  reduce 33
+	LESEQL  reduce 33
+	MOD  reduce 33
+	COMMA  reduce 33
+	OP  reduce 33
+	CP  reduce 33
+	IN  reduce 33
+	IF  reduce 33
+	ELSE  reduce 33
+	THEN  reduce 33
+	SEMI  reduce 33
+	PARD  reduce 33
+
+
+state 117
+	constants : OP . SUB NUM CP  (6)
+	fmultiplication : OP . fmultiplication CP  (40)
+	fdivision : OP . fdivision CP  (43)
+	mode : OP . mode CP  (46)
+	abse : OP . abse CP  (49)
+	funapp : OP . funapp CP  (51)
+	tuple : OP . tuple_list CP  (58)
+
+	VAR  shift 3
+	NUM  shift 4
+	FLOAT  shift 5
+	TRUE  shift 6
+	FALSE  shift 7
+	SUB  shift 33
+	ABS  shift 8
+	OP  shift 34
+	FUN  shift 10
+	IF  shift 12
+	.  error
+
+	constants  goto 14
+	comparison  goto 53
+	exp3  goto 36
+	addition  goto 18
+	substraction  goto 19
+	multiplication  goto 20
+	division  goto 21
+	faddition  goto 22
+	fsubstraction  goto 23
+	fmultiplication  goto 43
+	fdivision  goto 44
+	mode  goto 45
+	abse  goto 46
+	funapp  goto 47
+	ifelse  goto 29
+	tuple  goto 30
+	tuple_list  goto 48
+
+
+118: shift/reduce conflict (shift 69, reduce 36) on FMUL
+state 118
+	fsubstraction : fsubstraction FSUB fmultiplication .  (36)
+	fmultiplication : fmultiplication . FMUL fdivision  (39)
+
+	FMUL  shift 69
+	$end  reduce 36
+	VAR  reduce 36
+	NUM  reduce 36
+	FLOAT  reduce 36
+	TRUE  reduce 36
+	FALSE  reduce 36
+	ASSIGN  reduce 36
+	MUL  reduce 36
+	DIV  reduce 36
+	ADD  reduce 36
+	SUB  reduce 36
+	FDIV  reduce 36
+	FADD  reduce 36
+	FSUB  reduce 36
+	GRTEQL  reduce 36
+	GRT  reduce 36
+	LES  reduce 36
+	LESEQL  reduce 36
+	MOD  reduce 36
+	COMMA  reduce 36
+	OP  reduce 36
+	CP  reduce 36
+	IN  reduce 36
+	IF  reduce 36
+	ELSE  reduce 36
+	THEN  reduce 36
+	SEMI  reduce 36
+	PARD  reduce 36
+
+
+state 119
+	constants : OP . SUB NUM CP  (6)
+	fdivision : OP . fdivision CP  (43)
+	mode : OP . mode CP  (46)
+	abse : OP . abse CP  (49)
+	funapp : OP . funapp CP  (51)
+	tuple : OP . tuple_list CP  (58)
+
+	VAR  shift 3
+	NUM  shift 4
+	FLOAT  shift 5
+	TRUE  shift 6
+	FALSE  shift 7
+	SUB  shift 33
+	ABS  shift 8
+	OP  shift 34
+	FUN  shift 10
+	IF  shift 12
+	.  error
+
+	constants  goto 14
+	comparison  goto 53
+	exp3  goto 36
+	addition  goto 18
+	substraction  goto 19
+	multiplication  goto 20
+	division  goto 21
+	faddition  goto 22
+	fsubstraction  goto 23
+	fmultiplication  goto 24
+	fdivision  goto 44
+	mode  goto 45
+	abse  goto 46
+	funapp  goto 47
+	ifelse  goto 29
+	tuple  goto 30
+	tuple_list  goto 48
+
+
+120: shift/reduce conflict (shift 70, reduce 39) on FDIV
+state 120
+	fmultiplication : fmultiplication FMUL fdivision .  (39)
+	fdivision : fdivision . FDIV mode  (42)
+
+	FDIV  shift 70
+	$end  reduce 39
+	VAR  reduce 39
+	NUM  reduce 39
+	FLOAT  reduce 39
+	TRUE  reduce 39
+	FALSE  reduce 39
+	ASSIGN  reduce 39
+	MUL  reduce 39
+	DIV  reduce 39
+	ADD  reduce 39
+	SUB  reduce 39
+	FMUL  reduce 39
+	FADD  reduce 39
+	FSUB  reduce 39
+	GRTEQL  reduce 39
+	GRT  reduce 39
+	LES  reduce 39
+	LESEQL  reduce 39
+	MOD  reduce 39
+	COMMA  reduce 39
+	OP  reduce 39
+	CP  reduce 39
+	IN  reduce 39
+	IF  reduce 39
+	ELSE  reduce 39
+	THEN  reduce 39
+	SEMI  reduce 39
+	PARD  reduce 39
+
+
+state 121
+	constants : OP . SUB NUM CP  (6)
+	mode : OP . mode CP  (46)
+	abse : OP . abse CP  (49)
+	funapp : OP . funapp CP  (51)
+	tuple : OP . tuple_list CP  (58)
+
+	VAR  shift 3
+	NUM  shift 4
+	FLOAT  shift 5
+	TRUE  shift 6
+	FALSE  shift 7
+	SUB  shift 33
+	ABS  shift 8
+	OP  shift 34
+	FUN  shift 10
+	IF  shift 12
+	.  error
+
+	constants  goto 14
+	comparison  goto 53
+	exp3  goto 36
+	addition  goto 18
+	substraction  goto 19
+	multiplication  goto 20
+	division  goto 21
+	faddition  goto 22
+	fsubstraction  goto 23
+	fmultiplication  goto 24
+	fdivision  goto 25
+	mode  goto 45
+	abse  goto 46
+	funapp  goto 47
+	ifelse  goto 29
+	tuple  goto 30
+	tuple_list  goto 48
+
+
+122: shift/reduce conflict (shift 71, reduce 42) on MOD
+state 122
+	fdivision : fdivision FDIV mode .  (42)
+	mode : mode . MOD abse  (45)
+
+	MOD  shift 71
+	$end  reduce 42
+	VAR  reduce 42
+	NUM  reduce 42
+	FLOAT  reduce 42
+	TRUE  reduce 42
+	FALSE  reduce 42
+	ASSIGN  reduce 42
+	MUL  reduce 42
+	DIV  reduce 42
+	ADD  reduce 42
+	SUB  reduce 42
+	FMUL  reduce 42
+	FDIV  reduce 42
+	FADD  reduce 42
+	FSUB  reduce 42
+	GRTEQL  reduce 42
+	GRT  reduce 42
+	LES  reduce 42
+	LESEQL  reduce 42
+	COMMA  reduce 42
+	OP  reduce 42
+	CP  reduce 42
+	IN  reduce 42
+	IF  reduce 42
+	ELSE  reduce 42
+	THEN  reduce 42
+	SEMI  reduce 42
+	PARD  reduce 42
+
+
+state 123
+	constants : OP . SUB NUM CP  (6)
+	abse : OP . abse CP  (49)
+	funapp : OP . funapp CP  (51)
+	tuple : OP . tuple_list CP  (58)
+
+	VAR  shift 3
+	NUM  shift 4
+	FLOAT  shift 5
+	TRUE  shift 6
+	FALSE  shift 7
+	SUB  shift 33
+	ABS  shift 8
+	OP  shift 34
+	FUN  shift 10
+	IF  shift 12
+	.  error
+
+	constants  goto 14
+	comparison  goto 53
+	exp3  goto 36
+	addition  goto 18
+	substraction  goto 19
+	multiplication  goto 20
+	division  goto 21
+	faddition  goto 22
+	fsubstraction  goto 23
+	fmultiplication  goto 24
+	fdivision  goto 25
+	mode  goto 26
+	abse  goto 46
+	funapp  goto 47
+	ifelse  goto 29
+	tuple  goto 30
+	tuple_list  goto 48
+
+
+state 124
+	mode : mode MOD abse .  (45)
+
+	.  reduce 45
+
+
+state 125
+	funapp : funapp OP exp3 . CP  (53)
+	tuple_list : exp3 . COMMA exp3  (59)
+	tuple_list : exp3 . COMMA tuple_list  (60)
+
+	COMMA  shift 77
+	CP  shift 135
+	.  error
+
+
+state 126
+	constants : OP SUB NUM CP .  (6)
+
+	.  reduce 6
+
+
+state 127
+	exp3 : OP comparison CP .  (13)
+
+	.  reduce 13
+
+
+state 128
+	tuple_list : exp3 . COMMA exp3  (59)
+	tuple_list : exp3 COMMA exp3 .  (59)
+	tuple_list : exp3 . COMMA tuple_list  (60)
+
+	COMMA  shift 77
+	CP  reduce 59
+
+
+state 129
+	tuple_list : exp3 COMMA tuple_list .  (60)
+
+	.  reduce 60
+
+
+state 130
+	funapp : FUN VAR ARROW exp3 .  (54)
+
+	.  reduce 54
+
+
+state 131
+	def : LET VAR ASSIGN exp4 .  (61)
+
+	.  reduce 61
+
+
+state 132
+	def : LET REC varlist ASSIGN . exp4  (65)
+
+	VAR  shift 3
+	NUM  shift 4
+	FLOAT  shift 5
+	TRUE  shift 6
+	FALSE  shift 7
+	ABS  shift 8
+	OP  shift 9
+	FUN  shift 10
+	IF  shift 12
+	.  error
+
+	constants  goto 14
+	exp4  goto 136
+	comparison  goto 17
+	addition  goto 18
+	substraction  goto 19
+	multiplication  goto 20
+	division  goto 21
+	faddition  goto 22
+	fsubstraction  goto 23
+	fmultiplication  goto 24
+	fdivision  goto 25
+	mode  goto 26
+	abse  goto 27
+	funapp  goto 28
+	ifelse  goto 29
+	tuple  goto 30
+
+
+state 133
+	def : LET varlist ASSIGN exp4 .  (64)
+
+	.  reduce 64
+
+
+state 134
+	ifelse : IF exp3 THEN exp3 . ELSE exp3  (56)
+
+	ELSE  shift 137
+	.  error
+
+
+state 135
+	funapp : funapp OP exp3 CP .  (53)
+
+	.  reduce 53
+
+
+state 136
+	def : LET REC varlist ASSIGN exp4 .  (65)
+
+	.  reduce 65
+
+
+state 137
+	ifelse : IF exp3 THEN exp3 ELSE . exp3  (56)
+
+	VAR  shift 3
+	NUM  shift 4
+	FLOAT  shift 5
+	TRUE  shift 6
+	FALSE  shift 7
+	ABS  shift 8
+	OP  shift 34
+	FUN  shift 10
+	IF  shift 12
+	.  error
+
+	constants  goto 14
+	comparison  goto 53
+	exp3  goto 138
+	addition  goto 18
+	substraction  goto 19
+	multiplication  goto 20
+	division  goto 21
+	faddition  goto 22
+	fsubstraction  goto 23
+	fmultiplication  goto 24
+	fdivision  goto 25
+	mode  goto 26
+	abse  goto 27
+	funapp  goto 28
+	ifelse  goto 29
+	tuple  goto 30
+
+
+state 138
+	ifelse : IF exp3 THEN exp3 ELSE exp3 .  (56)
+
+	.  reduce 56
+
+
+State 18 contains 1 shift/reduce conflict.
+State 19 contains 1 shift/reduce conflict.
+State 20 contains 1 shift/reduce conflict.
+State 21 contains 1 shift/reduce conflict.
+State 22 contains 1 shift/reduce conflict.
+State 23 contains 1 shift/reduce conflict.
+State 24 contains 1 shift/reduce conflict.
+State 25 contains 1 shift/reduce conflict.
+State 26 contains 1 shift/reduce conflict.
+State 28 contains 7 shift/reduce conflicts.
+State 32 contains 7 shift/reduce conflicts.
+State 37 contains 1 shift/reduce conflict.
+State 38 contains 1 shift/reduce conflict.
+State 39 contains 1 shift/reduce conflict.
+State 40 contains 1 shift/reduce conflict.
+State 41 contains 1 shift/reduce conflict.
+State 42 contains 1 shift/reduce conflict.
+State 43 contains 1 shift/reduce conflict.
+State 44 contains 1 shift/reduce conflict.
+State 45 contains 1 shift/reduce conflict.
+State 46 contains 1 shift/reduce conflict.
+State 47 contains 1 shift/reduce conflict.
+State 53 contains 5 shift/reduce conflicts.
+State 99 contains 2 shift/reduce conflicts.
+State 100 contains 2 shift/reduce conflicts.
+State 102 contains 1 shift/reduce conflict.
+State 103 contains 1 shift/reduce conflict.
+State 104 contains 1 shift/reduce conflict.
+State 105 contains 1 shift/reduce conflict.
+State 106 contains 1 shift/reduce conflict.
+State 114 contains 1 shift/reduce conflict.
+State 116 contains 1 shift/reduce conflict.
+State 118 contains 1 shift/reduce conflict.
+State 120 contains 1 shift/reduce conflict.
+State 122 contains 1 shift/reduce conflict.
+
+
+41 terminals, 23 nonterminals
+69 grammar rules, 139 states
